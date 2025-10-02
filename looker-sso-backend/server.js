@@ -32,6 +32,12 @@ const sdk = LookerNodeSDK.init40({
     client_secret: process.env.LOOKER_CLIENT_SECRET
 });
 
+// --- NEW DEBUGGING ROUTE (ROOT) ---
+// This will help us test if the server is running and responding to basic requests.
+app.get('/', (req, res) => {
+    res.status(200).send('Looker SSO Embed Server is running!');
+});
+
 
 // 5. Define Constants
 const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
