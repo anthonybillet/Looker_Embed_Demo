@@ -1,0 +1,6 @@
+This file tells Docker which files and folders to ignore when building the image.
+Ignore the node_modules folder, as dependencies will be installed inside the container.
+node_modules
+
+Ignore the .env file. Secrets should be managed by the cloud provider, not baked into the image.
+.env

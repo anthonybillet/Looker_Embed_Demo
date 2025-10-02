@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<!-- The lang="en" attribute specifies that the language of the document is English. -->
+<html lang="en">
+<head>
+    <!-- The charset meta tag specifies the character encoding for the HTML document. UTF-8 is standard. -->
+    <meta charset="UTF-8">
+    <!-- The viewport meta tag makes the website responsive, ensuring it looks good on all devices. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The title of the webpage, which appears in the browser tab. -->
+    <title>Looker SSO Embed Demo</title>
+    <!-- This script tag loads Tailwind CSS, a utility-first CSS framework for rapid UI development. -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- This link tag imports the "Inter" font from Google Fonts for a clean, modern look. -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- The style block contains custom CSS rules that supplement Tailwind CSS. -->
+    <style>
+        /* Sets the default font for the entire page to 'Inter'. */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Styles for the loading spinner animation. */
+        .loader {
+            border: 4px solid #f3f3f3; /* Light grey circle */
+            border-top: 4px solid #4f46e5; /* Indigo color for the moving part */
+            border-radius: 50%; /* Makes it a perfect circle */
+            width: 20px;
+            height: 20px;
+            animation: spin 1s linear infinite; /* Applies the spin animation */
+        }
+        /* The @keyframes rule defines the animation code for 'spin'. */
+        @keyframes spin {
+            0% { transform: rotate(0deg); } /* Animation starts at 0 degrees rotation. */
+            100% { transform: rotate(360deg); } /* Animation ends after a full 360-degree rotation. */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <!-- This is the main container for the entire application. -->
+    <div id="app" class="min-h-screen flex flex-col">
+
+        <!-- Login View: This section is visible when the user is not logged in. -->
+        <div id="login-view" class="flex-grow flex items-center justify-center">
+            <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+                <div class="text-center">
+                    <h2 class="mt-6 text-3xl font-bold text-gray-900">
+                        Looker Embed Demo
+                    </h2>
+                    <p class="mt-2 text-sm text-gray-600">
+                        Log in to view your dashboard.
+                    </p>
+                    <p class="mt-1 text-xs text-gray-500">
+                        (Use Carhartt, Columbia, or Manager)
+                    </p>
+                </div>
+                <!-- The login form itself. -->
+                <form id="login-form" class="mt-8 space-y-6">
+                    <div class="rounded-md shadow-sm -space-y-px">
+                        <div>
+                            <label for="username" class="sr-only">Username</label>
+                            <input id="username" name="username" type="text" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Username">
+                        </div>
+                        <div>
+                            <label for="password" class="sr-only">Password</label>
+                            <input id="password" name="password" type="password" required class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm" placeholder="Password">
+                        </div>
+                    </div>
+                    <!-- This paragraph will display any error messages during login. -->
+                    <p id="error-message" class="text-center text-sm text-red-600 h-auto min-h-4"></p>
+                    <div>
+                        <!-- The submit button for the form. -->
+                        <button id="signin-button" type="submit" class="group relative w-full flex justify-center items-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:bg-indigo-400">
+                            <span class="button-text">Sign in</span>
+                            <!-- The loading spinner, hidden by default. -->
+                            <div class="loader hidden ml-3"></div>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Dashboard View: This section is shown after a successful login. It's hidden by default. -->
+        <div id="dashboard-view" class="hidden flex-grow flex flex-col">
+            <!-- The header bar of the dashboard view. -->
+            <header class="bg-white shadow-md z-10">
+                <div class="max-w-7xl mx-auto py-2 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
+                    <h1 class="text-xl font-semibold text-gray-900">
+                        Embedded Dashboard
+                    </h1>
+                    <div class="flex items-center space-x-4">
+                         <!-- Displays the currently logged-in user's name. -->
+                         <p class="text-sm">Logged in as: <span id="user-display" class="font-bold"></span></p>
+                        <!-- The logout button. -->
+                        <button id="logout-button" class="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700">
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </header>
+            <!-- The main content area where the Looker iframe will be displayed. I've added 'flex' and 'flex-col' to make this a flex container. -->
+            <main class="flex-grow bg-gray-200 flex flex-col">
+                 <!-- The iframe for the Looker dashboard will be loaded here. I've replaced 'h-full' with 'flex-grow' so it expands to fill the main area. -->
+                <iframe id="looker-iframe" class="w-full flex-grow bg-white" src="about:blank"></iframe>
+            </main>
+        </div>
+
+    </div>
+
+    <!-- The script tag contains all the JavaScript logic for the application. -->
+    <script>
+        // This event listener ensures that the script runs only after the entire HTML document has been loaded.
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            // Here we get references to all the HTML elements we need to interact with.
+            const loginView = document.getElementById('login-view');
+            const dashboardView = document.getElementById('dashboard-view');
+            const loginForm = document.getElementById('login-form');
+            const errorMessage = document.getElementById('error-message');
+            const userDisplay = document.getElementById('user-display');
+            const logoutButton = document.getElementById('logout-button');
+            const lookerIframe = document.getElementById('looker-iframe');
+            const signinButton = document.getElementById('signin-button');
+            const signinButtonText = signinButton.querySelector('.button-text');
+            const signinButtonLoader = signinButton.querySelector('.loader');
+
+            // --- App State ---
+            // This variable will store the username of the currently logged-in user.
+            let currentUser = null;
+
+            // --- Valid Credentials ---
+            // This object acts as a simple "database" of allowed usernames and passwords.
+            const validUsers = {
+                'Carhartt': 'Carhartt',
+                'Columbia': 'Columbia',
+                'Manager': 'Manager'
+            };
+
+            // --- Configuration ---
+            // This constant holds the URL of our backend server's API endpoint.
+            const API_ENDPOINT_URL = 'http://localhost:3000/api/get-embed-url';
+            
+            /**
+             * Generates a signed Looker embed URL by calling our secure backend endpoint.
+             * @param {string} username - The username of the logged-in user.
+             * @returns {Promise<string>} A promise that resolves to the signed embed URL.
+             */
+            const generateSignedEmbedUrl = async (username) => {
+                // The 'try...catch' block handles potential errors during the API call.
+                try {
+                    // 'await fetch()' makes an HTTP request to our backend server.
+                    const response = await fetch(API_ENDPOINT_URL, {
+                        method: 'POST', // We use the POST method to send data.
+                        headers: {
+                            'Content-Type': 'application/json', // We tell the server we're sending JSON data.
+                        },
+                        // 'JSON.stringify' converts our JavaScript object into a JSON string to send.
+                        body: JSON.stringify({
+                            username: username,
+                        }),
+                    });
+
+                    // If the server response is not successful (e.g., status 404 or 500), we need to handle the error.
+                    if (!response.ok) {
+                        const contentType = response.headers.get("content-type");
+                        // If the server sent back JSON with an error message, we parse it.
+                        if (contentType && contentType.indexOf("application/json") !== -1) {
+                            const errorData = await response.json();
+                            throw new Error(errorData.error || 'Server returned a JSON error.');
+                        } else {
+                            // The response is not JSON. This is likely an HTML error page (e.g., 404 Not Found).
+                            // This prevents the "Unexpected token '<'" JSON parsing error.
+                            throw new Error(`Server returned a non-JSON response. Status: ${response.status}. This usually means the API endpoint is incorrect or the server crashed. Check server logs.`);
+                        }
+                    }
+                    
+                    // We parse the JSON response from the server. This can still fail if the response is OK but the body isn't valid JSON.
+                    const data = await response.json();
+                    
+                    // We check if the response actually contains a URL.
+                    if (!data.url) {
+                        throw new Error('Server response did not include a URL.');
+                    }
+                    
+                    // If everything is successful, we return the signed URL from the server.
+                    return data.url;
+
+                } catch (error) {
+                    console.error('Error fetching signed URL:', error);
+                    // We re-throw the error so it can be caught by the function that called this one.
+                    throw error;
+                }
+            };
+            
+            /**
+             * Manages the UI state of the sign-in button (e.g., showing a spinner).
+             * @param {boolean} isLoading - True if the app is currently loading data.
+             */
+            const setLoadingState = (isLoading) => {
+                if (isLoading) {
+                    signinButton.disabled = true; // Disable the button to prevent multiple clicks.
+                    signinButtonText.textContent = 'Signing in...'; // Change the button text.
+                    signinButtonLoader.classList.remove('hidden'); // Show the spinner.
+                    errorMessage.textContent = ''; // Clear any previous error messages.
+                } else {
+                    signinButton.disabled = false; // Re-enable the button.
+                    signinButtonText.textContent = 'Sign in'; // Reset the button text.
+                    signinButtonLoader.classList.add('hidden'); // Hide the spinner.
+                }
+            };
+
+            // --- Event Handlers ---
+            // This adds an event listener to the login form for the 'submit' event.
+            loginForm.addEventListener('submit', async (event) => {
+                event.preventDefault(); // Prevents the default form submission which would reload the page.
+                const username = loginForm.username.value.trim(); // Get the username, remove whitespace.
+                const password = loginForm.password.value;
+
+                // Check if the provided username exists and the password is correct.
+                if (validUsers[username] && validUsers[username] === password) {
+                    setLoadingState(true); // Show the loading state.
+                    // The 'try...catch...finally' block handles the asynchronous API call.
+                    try {
+                        // If credentials are valid, set the current user for display purposes.
+                        currentUser = username;
+                        
+                        // Determine the correct user attribute value to send to the backend.
+                        // If the user is 'Manager', send the comma-separated list. Otherwise, send the username.
+                        const attributeToSend = (username === 'Manager') ? 'Carhartt, Columbia' : username;
+
+                        // Get the embed URL from the backend using the determined attribute.
+                        const embedUrl = await generateSignedEmbedUrl(attributeToSend);
+                        
+                        // Update the UI with the user's information and the new URL.
+                        userDisplay.textContent = currentUser;
+                        lookerIframe.src = embedUrl;
+                        
+                        // Switch from the login view to the dashboard view.
+                        loginView.classList.add('hidden');
+                        dashboardView.classList.remove('hidden');
+                    } catch (error) {
+                        // If an error occurs during the API call, display a more helpful message.
+                        let friendlyMessage = `An unexpected error occurred: ${error.message}`;
+                        
+                        // A TypeError with 'Failed to fetch' is a common indicator of a network problem (server not running, CORS).
+                        if (error instanceof TypeError && error.message.includes('Failed to fetch')) {
+                             friendlyMessage = 'Error: Could not connect to the server. Please ensure your backend server is running and accessible at ' + API_ENDPOINT_URL;
+                        } 
+                        // This is the specific error message we created above for non-JSON responses.
+                        else if (error.message.includes('non-JSON response')) {
+                            friendlyMessage = `Error: The server sent back an unexpected response, not valid JSON. This often means the API endpoint is wrong or the server had an error. Please check the server's terminal output for details.`;
+                        }
+                        // This is the specific error our server sends back if it fails to talk to Looker.
+                        else if (error.message.includes('Failed to generate embed URL')) {
+                            friendlyMessage = 'ERROR ON SERVER: Your backend server failed to get a URL from Looker. The problem is NOT on this webpage. Please LOOK at the terminal window where your "server.js" is running. It will show the specific Looker SDK error.';
+                        }
+                        errorMessage.textContent = friendlyMessage;
+                    } finally {
+                        // This 'finally' block will run regardless of whether an error occurred or not.
+                        setLoadingState(false); // Hide the loading state.
+                    }
+                } else {
+                    // If credentials are invalid, show an error message.
+                    errorMessage.textContent = 'Invalid username or password.';
+                }
+            });
+
+            // This adds a 'click' event listener to the logout button.
+            logoutButton.addEventListener('click', () => {
+                // Reset the application state.
+                currentUser = null;
+                loginForm.reset(); // Clear the input fields.
+                lookerIframe.src = 'about:blank'; // Clear the iframe.
+                // Switch back to the login view.
+                dashboardView.classList.add('hidden');
+                loginView.classList.remove('hidden');
+                errorMessage.textContent = ''; // Clear any lingering error messages.
+            });
+
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
