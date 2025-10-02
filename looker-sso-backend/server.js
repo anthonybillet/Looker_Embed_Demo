@@ -3,7 +3,7 @@
 // 1. Import Dependencies
 const express = require('express');
 const cors = require('cors');
-const { LookerNodeSDK, NodeSettings } = require('@looker/sdk-node');
+const { LookerNodeSDK } = require('@looker/sdk-node');
 
 // --- NEW DEBUGGING STEP ---
 // Log the environment variables as soon as the server starts.
@@ -22,14 +22,10 @@ const app = express();
 app.use(cors()); // Enables Cross-Origin Resource Sharing
 app.use(express.json()); // Parses incoming JSON requests
 
-// 4. Looker SDK Initialization (Updated for Cloud Run)
-// This explicitly initializes the SDK using the environment variables
-// provided securely by the Cloud Run environment.
-const sdk = LookerNodeSDK.init40(NodeSettings.fromObject({
-    base_url: process.env.LOOKER_BASE_URL,
-    client_id: process.env.LOOKER_CLIENT_ID,
-    client_secret: process.env.LOOKER_CLIENT_SECRET,
-}));
+// 4. Looker SDK Initialization (Corrected for Cloud Run)
+// This simplified initialization automatically reads the LOOKER_... environment
+// variables from the Cloud Run environment.
+const sdk = LookerNodeSDK.init40();
 
 
 // 5. Define Constants
