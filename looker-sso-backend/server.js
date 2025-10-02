@@ -5,6 +5,16 @@ const express = require('express');
 const cors = require('cors');
 const { LookerNodeSDK, NodeSettings } = require('@looker/sdk-node');
 
+// --- NEW DEBUGGING STEP ---
+// Log the environment variables as soon as the server starts.
+// This will show us exactly what values the container is receiving from the GCP environment.
+console.log("--- Verifying Environment Variables at Startup ---");
+console.log("LOOKER_BASE_URL:", process.env.LOOKER_BASE_URL);
+console.log("LOOKER_CLIENT_ID:", process.env.LOOKER_CLIENT_ID);
+// For security, we only check if the secret exists, we don't print its value.
+console.log("LOOKER_CLIENT_SECRET is set:", !!process.env.LOOKER_CLIENT_SECRET);
+console.log("---------------------------------------------");
+
 // 2. Initialize Express App
 const app = express();
 
@@ -23,7 +33,7 @@ const sdk = LookerNodeSDK.init40(NodeSettings.fromObject({
 
 
 // 5. Define Constants
-// const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
+const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
 const SESSION_LENGTH = 3600; // Session length in seconds (e.g., 3600 = 1 hour)
 
 // 6. Create the API Endpoint
@@ -36,7 +46,6 @@ app.post('/api/get-embed-url', async (req, res) => {
 
     // Construct the target URL dynamically using the environment variable and constant.
     const targetUrl = `https://7d9da728-3eaf-4944-965c-d1d56538803c.looker.app/embed/dashboards/EU9MxVoyJiidBm9oCxVVhR`;
-
     
     console.log('Constructed target_url:', targetUrl);
 
