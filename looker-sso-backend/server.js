@@ -24,9 +24,13 @@ app.use(cors()); // Enables Cross-Origin Resource Sharing
 app.use(express.json()); // Parses incoming JSON requests
 
 // 4. Looker SDK Initialization (Corrected for Cloud Run)
-// This simplified initialization automatically reads the LOOKER_... environment
-// variables from the Cloud Run environment now that we've confirmed they exist.
-const sdk = LookerNodeSDK.init40();
+// This explicitly passes the confirmed environment variables to the SDK,
+// ensuring it initializes correctly in the Cloud Run environment.
+const sdk = LookerNodeSDK.init40({
+    base_url: process.env.LOOKER_BASE_URL,
+    client_id: process.env.LOOKER_CLIENT_ID,
+    client_secret: process.env.LOOKER_CLIENT_SECRET
+});
 
 
 // 5. Define Constants
@@ -42,7 +46,7 @@ app.post('/api/get-embed-url', async (req, res) => {
     }
 
     // Construct the target URL dynamically using the environment variable and constant.
-    const targetUrl = `https://7d9da728-3eaf-4944-965c-d1d56538803c.looker.app/embed/dashboards/EU9MxVoyJiidBm9oCxVVhR`;
+    const targetUrl = `${process.env.LOOKER_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
     
     console.log('Constructed target_url:', targetUrl);
 
