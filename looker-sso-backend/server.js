@@ -66,7 +66,7 @@ app.post('/api/get-embed-url/?', async (req, res) => {
         last_name: 'User',
         permissions: [ // Define what the embed user can do.
             'see_user_dashboards',
-            'see_lookml_ dashboards',
+            'see_lookml_dashboards',
             'access_data',
             'see_looks',
         ],
@@ -91,7 +91,7 @@ app.post('/api/get-embed-url/?', async (req, res) => {
 
 // --- NEW DEBUGGING ROUTE (CATCH-ALL) ---
 // This will catch any requests that don't match the routes above and log them.
-app.use((req,.res) => {
+app.use((req, res) => {
     console.log(`Caught an unmatched request for: ${req.method} ${req.path}`);
     res.status(404).send('Endpoint not found.');
 });
