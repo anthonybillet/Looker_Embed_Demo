@@ -1,25 +1,29 @@
 // server.js
 
 // 1. Import Dependencies
-require('dotenv').config(); // Loads environment variables from a .env file
 const express = require('express');
 const cors = require('cors');
-const { LookerNodeSDK } = require('@looker/sdk-node');
+const { LookerNodeSDK, NodeSettings } = require('@looker/sdk-node');
 
 // 2. Initialize Express App
 const app = express();
-const port = 3000;
 
 // 3. Middleware Setup
 app.use(cors()); // Enables Cross-Origin Resource Sharing
 app.use(express.json()); // Parses incoming JSON requests
 
-// 4. Looker SDK Initialization
-// Automatically uses environment variables: LOOKER_BASE_URL, LOOKER_CLIENT_ID, LOOKER_CLIENT_SECRET
-const sdk = LookerNodeSDK.init40();
+// 4. Looker SDK Initialization (Updated for Cloud Run)
+// This explicitly initializes the SDK using the environment variables
+// provided securely by the Cloud Run environment.
+const sdk = LookerNodeSDK.init40(NodeSettings.fromObject({
+    base_url: process.env.LOOKER_BASE_URL,
+    client_id: process.env.LOOKER_CLIENT_ID,
+    client_secret: process.env.LOOKER_CLIENT_SECRET,
+}));
+
 
 // 5. Define Constants
-// const DASHBOARD_ID = '1'; // <<< IMPORTANT: REPLACE '1' WITH YOUR ACTUAL DASHBOARD ID
+// const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
 const SESSION_LENGTH = 3600; // Session length in seconds (e.g., 3600 = 1 hour)
 
 // 6. Create the API Endpoint
@@ -30,10 +34,10 @@ app.post('/api/get-embed-url', async (req, res) => {
         return res.status(400).json({ error: 'Username is required.' });
     }
 
+    // Construct the target URL dynamically using the environment variable and constant.
     const targetUrl = `https://7d9da728-3eaf-4944-965c-d1d56538803c.looker.app/embed/dashboards/EU9MxVoyJiidBm9oCxVVhR`;
+
     
-    // --- ADDED FOR DEBUGGING ---
-    // This line will print the fully constructed URL to your terminal.
     console.log('Constructed target_url:', targetUrl);
 
     // These are the parameters for the SSO embed URL.
@@ -53,7 +57,6 @@ app.post('/api/get-embed-url', async (req, res) => {
         models: ['data_security_demo'], // <<< IMPORTANT: REPLACE WITH YOUR LOOKML MODEL NAME(S)
         user_attributes: {
             // This is where you pass the user attribute to filter the data.
-            // The key ('brand' in this case) must match the name of the User Attribute in Looker.
             'customer_id_row_level': username,
         },
     };
@@ -70,8 +73,10 @@ app.post('/api/get-embed-url', async (req, res) => {
     }
 });
 
-// 7. Start the Server
-app.listen(port, () => {
-    console.log(`Server is running on http://localhost:${port}`);
+// 7. Start the Server (Updated for Cloud Run)
+// Cloud Run provides the PORT environment variable. We default to 3000 for local development.
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Server is running on port: ${PORT}`);
 });
 
