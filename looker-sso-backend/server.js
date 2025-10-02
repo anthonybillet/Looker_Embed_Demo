@@ -43,8 +43,8 @@ app.get('/', (req, res) => {
     res.status(200).send('Looker SSO Embed Server is running!');
 });
 
-// 6. Create the API Endpoint (Updated with optional trailing slash)
-app.post('/api/get-embed-url/?', async (req, res) => {
+// 6. Create the API Endpoint (Corrected path)
+app.post('/api/get-embed-url', async (req, res) => {
     const { username } = req.body;
 
     if (!username) {
