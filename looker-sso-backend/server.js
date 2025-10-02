@@ -46,7 +46,8 @@ app.post('/api/get-embed-url', async (req, res) => {
     }
 
     // Construct the target URL dynamically using the environment variable and constant.
-    const targetUrl = `${process.env.LOOKER_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
+    // const targetUrl = `${process.env.LOOKER_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
+    const targetUrl = `https://7d9da728-3eaf-4944-965c-d1d56538803c.looker.app/embed/dashboards/EU9MxVoyJiidBm9oCxVVhR`;
     
     console.log('Constructed target_url:', targetUrl);
 
