@@ -21,18 +21,18 @@ app.use(cors());
 app.use(express.json());
 
 // 4. Looker SDK Initialization (Final Corrected Version)
-// The SDK requires a proper NodeSettings object, not a plain object,
-// to have access to its internal functions like `readConfig`.
+// This version explicitly creates the settings object property by property
+// to avoid any issues with the constructor.
 let sdk;
 try {
-    // First, create a proper settings object from the environment variables.
-    const settings = new NodeSettings({
-        base_url: process.env.LOOKER_BASE_URL,
-        client_id: process.env.LOOKER_CLIENT_ID,
-        client_secret: process.env.LOOKER_CLIENT_SECRET,
-    });
+    // Create an empty settings object first.
+    const settings = new NodeSettings();
+    // Assign each property individually from the environment variables.
+    settings.base_url = process.env.LOOKER_BASE_URL;
+    settings.client_id = process.env.LOOKER_CLIENT_ID;
+    settings.client_secret = process.env.LOOKER_CLIENT_SECRET;
 
-    // Then, initialize the SDK with this settings object.
+    // Then, initialize the SDK with this fully constructed settings object.
     sdk = LookerNodeSDK.init40(settings);
     console.log("Looker SDK Initialized Successfully.");
 } catch (e) {
