@@ -3,7 +3,8 @@
 // 1. Import Dependencies
 const express = require('express');
 const cors = require('cors');
-const { LookerNodeSDK } = require('@looker/sdk-node');
+// Import NodeSettings along with the SDK
+const { LookerNodeSDK, NodeSettings } = require('@looker/sdk-node');
 
 // --- Verifying Environment Variables at Startup ---
 console.log("--- Verifying Environment Variables at Startup ---");
@@ -20,20 +21,26 @@ app.use(cors());
 app.use(express.json());
 
 // 4. Looker SDK Initialization (Final Corrected Version)
-// The SDK is initialized by passing the environment variables directly as a plain object.
-// This is the most robust method and avoids the issues with the NodeSettings wrapper.
+// The SDK requires a proper NodeSettings object, not a plain object,
+// to have access to its internal functions like `readConfig`.
 let sdk;
 try {
-    sdk = LookerNodeSDK.init40({
+    // First, create a proper settings object from the environment variables.
+    const settings = new NodeSettings({
         base_url: process.env.LOOKER_BASE_URL,
         client_id: process.env.LOOKER_CLIENT_ID,
         client_secret: process.env.LOOKER_CLIENT_SECRET,
     });
+
+    // Then, initialize the SDK with this settings object.
+    sdk = LookerNodeSDK.init40(settings);
     console.log("Looker SDK Initialized Successfully.");
 } catch (e) {
     console.error('CRITICAL: Looker SDK failed to initialize.', e);
+    // We exit the process because the server cannot run without the SDK.
     process.exit(1);
 }
+
 
 // 5. Define Constants
 const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
@@ -46,6 +53,7 @@ app.get('/', (req, res) => {
 
 // 6. Create the API Endpoint
 app.post('/api/get-embed-url', async (req, res) => {
+    // This check ensures the SDK was initialized before trying to use it.
     if (!sdk) {
         console.error("SDK not available to handle request.");
         return res.status(500).json({ error: 'Server is not properly configured.' });
