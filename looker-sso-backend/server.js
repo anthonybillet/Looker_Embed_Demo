@@ -7,10 +7,11 @@ const cors = require('cors');
 const { LookerNodeSDK, NodeSettings } = require('@looker/sdk-node');
 
 // --- Verifying Environment Variables at Startup ---
+// NOTE: We are now checking for the correct LOOKERSDK_ prefix.
 console.log("--- Verifying Environment Variables at Startup ---");
-console.log("LOOKER_BASE_URL:", process.env.LOOKER_BASE_URL);
-console.log("LOOKER_CLIENT_ID:", process.env.LOOKER_CLIENT_ID);
-console.log("LOOKER_CLIENT_SECRET is set:", !!process.env.LOOKER_CLIENT_SECRET);
+console.log("LOOKERSDK_BASE_URL:", process.env.LOOKERSDK_BASE_URL);
+console.log("LOOKERSDK_CLIENT_ID:", process.env.LOOKERSDK_CLIENT_ID);
+console.log("LOOKERSDK_CLIENT_SECRET is set:", !!process.env.LOOKERSDK_CLIENT_SECRET);
 console.log("---------------------------------------------");
 
 // 2. Initialize Express App
@@ -21,24 +22,16 @@ app.use(cors());
 app.use(express.json());
 
 // 4. Looker SDK Initialization (Final Corrected Version)
-// This version explicitly creates the settings object property by property
-// to avoid any issues with the constructor.
+// Based on the documentation, this is the correct way to have the SDK
+// automatically read from the properly named environment variables.
 let sdk;
 try {
-    // Create an empty settings object first.
-    const settings = new NodeSettings();
-    // Assign each property individually from the environment variables.
-    settings.base_url = process.env.LOOKER_BASE_URL;
-    settings.client_id = process.env.LOOKER_CLIENT_ID;
-    settings.client_secret = process.env.LOOKER_CLIENT_SECRET;
-
-    // Then, initialize the SDK with this fully constructed settings object.
-    sdk = LookerNodeSDK.init40(settings);
+    // This tells the SDK to look for LOOKERSDK_ environment variables.
+    sdk = LookerNodeSDK.init40(new NodeSettings());
     console.log("Looker SDK Initialized Successfully.");
 } catch (e) {
     console.error('CRITICAL: Looker SDK failed to initialize.', e);
-    // We exit the process because the server cannot run without the SDK.
-    process.exit(1);
+    process.exit(1); // Exit if SDK fails
 }
 
 
@@ -53,7 +46,6 @@ app.get('/', (req, res) => {
 
 // 6. Create the API Endpoint
 app.post('/api/get-embed-url', async (req, res) => {
-    // This check ensures the SDK was initialized before trying to use it.
     if (!sdk) {
         console.error("SDK not available to handle request.");
         return res.status(500).json({ error: 'Server is not properly configured.' });
@@ -65,7 +57,8 @@ app.post('/api/get-embed-url', async (req, res) => {
         return res.status(400).json({ error: 'Username is required.' });
     }
 
-    const targetUrl = `${process.env.LOOKER_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
+    // We must now use the LOOKERSDK_BASE_URL for constructing the target URL.
+    const targetUrl = `${process.env.LOOKERSDK_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
     console.log('Constructed target_url:', targetUrl);
 
     const embedParams = {
