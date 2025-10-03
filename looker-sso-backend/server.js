@@ -20,16 +20,25 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 4. Looker SDK Initialization (Final Correct Version)
-// First, create a proper settings object from the environment variables.
-const settings = new NodeSettings({
-    base_url: process.env.LOOKER_BASE_URL,
-    client_id: process.env.LOOKER_CLIENT_ID,
-    client_secret: process.env.LOOKER_CLIENT_SECRET,
-});
+// 4. Looker SDK Initialization (with Error Handling)
+let sdk;
+try {
+    // First, create a proper settings object from the environment variables.
+    const settings = new NodeSettings({
+        base_url: process.env.LOOKER_BASE_URL,
+        client_id: process.env.LOOKER_CLIENT_ID,
+        client_secret: process.env.LOOKER_CLIENT_SECRET,
+    });
 
-// Then, initialize the SDK with this settings object.
-const sdk = LookerNodeSDK.init40(settings);
+    // Then, initialize the SDK with this settings object.
+    sdk = LookerNodeSDK.init40(settings);
+    console.log("Looker SDK Initialized Successfully.");
+} catch (e) {
+    console.error('CRITICAL: Looker SDK failed to initialize.', e);
+    // We exit the process because the server cannot run without the SDK.
+    process.exit(1);
+}
+
 
 // 5. Define Constants
 const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
@@ -42,6 +51,12 @@ app.get('/', (req, res) => {
 
 // 6. Create the API Endpoint
 app.post('/api/get-embed-url', async (req, res) => {
+    // This check ensures the SDK was initialized before trying to use it.
+    if (!sdk) {
+        console.error("SDK not available to handle request.");
+        return res.status(500).json({ error: 'Server is not properly configured.' });
+    }
+
     const { username } = req.body;
 
     if (!username) {
