@@ -27,7 +27,7 @@ app.use(express.json());
 let sdk;
 try {
     // This tells the SDK to look for LOOKERSDK_ environment variables.
-    sdk = LookerNodeSDK.init40(new NodeSettings());
+    sdk = LookerNodeSDK.init40();
     console.log("Looker SDK Initialized Successfully.");
 } catch (e) {
     console.error('CRITICAL: Looker SDK failed to initialize.', e);
