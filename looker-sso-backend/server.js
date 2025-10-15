@@ -51,14 +51,15 @@ app.post('/api/get-embed-url', async (req, res) => {
         return res.status(500).json({ error: 'Server is not properly configured.' });
     }
 
-    const { username } = req.body;
+    // --- CHANGE #1: Destructure 'theme' from the request body ---
+    const { username, theme } = req.body;
 
-    if (!username) {
-        return res.status(400).json({ error: 'Username is required.' });
+    if (!username || !theme) {
+        return res.status(400).json({ error: 'Username and theme are required.' });
     }
 
-    // We must now use the LOOKERSDK_BASE_URL for constructing the target URL.
-    const targetUrl = `${process.env.LOOKERSDK_BASE_URL}/embed/dashboards/${DASHBOARD_ID}`;
+    // --- CHANGE #2: Append the theme to the targetUrl as a query parameter ---
+    const targetUrl = `${process.env.LOOKERSDK_BASE_URL}/embed/dashboards/${DASHBOARD_ID}?theme=${theme}`;
     console.log('Constructed target_url:', targetUrl);
 
     const embedParams = {
@@ -97,7 +98,7 @@ app.post('/api/get-embed-url', async (req, res) => {
 
     try {
         const signedUrl = await sdk.ok(sdk.create_sso_embed_url(embedParams));
-        console.log(`Successfully generated embed URL for user: ${username}`);
+        console.log(`Successfully generated embed URL for user: ${username} with theme: ${theme}`);
         res.json({ url: signedUrl.url });
     } catch (error) {
         console.error('Error generating Looker embed URL:', error);
