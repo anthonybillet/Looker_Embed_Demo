@@ -17,7 +17,7 @@
         }
         /* Custom styles for an active navigation link */
         .nav-link.active {
-            background-color: #004247; /* Custom dark teal for active state */
+            background-color: #4d103c; /* Custom dark purple for active state */
             color: #ffffff;
         }
         /* Ensure the iframe fills its container */
@@ -39,15 +39,15 @@
             <form id="loginForm" class="space-y-6">
                 <div>
                     <label for="username" class="sr-only">Username</label>
-                    <input id="username" name="username" type="text" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#00272B] focus:border-[#00272B] sm:text-sm" placeholder="Username">
+                    <input id="username" name="username" type="text" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm" placeholder="Username">
                 </div>
                 <div>
                     <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#00272B] focus:border-[#00272B] sm:text-sm" placeholder="Password">
+                    <input id="password" name="password" type="password" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm" placeholder="Password">
                 </div>
                 <div id="errorMessage" class="hidden text-sm text-red-600"></div>
                 <div>
-                    <button id="signInButton" type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#00272B] border border-transparent rounded-md group hover:bg-[#003E42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00272B]">
+                    <button id="signInButton" type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#511730] border border-transparent rounded-md group hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">
                         <span id="buttonText">Sign in</span>
                         <span id="loadingSpinner" class="hidden absolute inset-0 flex items-center justify-center">
                             <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -64,22 +64,22 @@
     <!-- MAIN APPLICATION DASHBOARD -->
     <div id="appPage" class="hidden h-screen w-full lg:flex">
         <!-- Left Sidebar Navigation -->
-        <aside class="w-60 flex-shrink-0 bg-[#00272B] text-white flex flex-col">
-            <div class="h-16 flex items-center justify-center border-b border-[#003E42]">
+        <aside class="w-60 flex-shrink-0 bg-[#320a28] text-white flex flex-col">
+            <div class="h-16 flex items-center justify-center border-b border-[#4d103c]">
                 <h1 class="font-brand text-2xl text-white">Your Brand Here</h1>
             </div>
             <nav class="flex-grow px-2 py-4">
                 <ul class="space-y-2">
-                    <li><a href="#" class="nav-link active flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#003E42] hover:text-white" data-target="homeContent">
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="homeContent">
                         <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         Home</a></li>
-                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#003E42] hover:text-white" data-target="marketingContent">
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="marketingContent">
                         <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514M12 18h3.132a4.001 4.001 0 003.868-2.818"/></svg>
                         Marketing</a></li>
-                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#003E42] hover:text-white" data-target="analyticsContent">
+                    <li><a href="#" class="nav-link active flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="analyticsContent">
                         <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H-1a2 2 0 01-2-2V5z"/></svg>
                         Analytics</a></li>
-                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#003E42] hover:text-white" data-target="productsContent">
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="productsContent">
                          <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                         Products</a></li>
                 </ul>
@@ -89,23 +89,23 @@
         <!-- Main Content Area -->
         <div class="flex-1 flex flex-col overflow-hidden">
             <!-- Top Header -->
-            <header class="h-16 flex items-center justify-between px-6 bg-white border-b border-gray-200">
+            <header class="h-16 flex items-center justify-between px-6 bg-[#DEFFFC]">
                 <!-- Search Bar -->
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
                     </span>
-                    <input class="w-full md:w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-[#00272B] focus:border-[#00272B]" type="search" placeholder="Search...">
+                    <input class="w-full md:w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-[#511730] focus:border-[#511730]" type="search" placeholder="Search...">
                 </div>
                 <!-- User Info & Logout -->
                 <div class="flex items-center space-x-4">
                      <span id="loggedInUser" class="text-sm text-gray-600"></span>
-                     <button id="logoutButton" class="px-4 py-2 text-sm font-medium text-white bg-[#00272B] rounded-md hover:bg-[#003E42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#00272B]">Logout</button>
+                     <button id="logoutButton" class="px-4 py-2 text-sm font-medium text-white bg-[#511730] rounded-md hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">Logout</button>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main id="pageContent" class="flex-1 overflow-y-auto p-6 bg-[#CCF5AC]">
+            <main id="pageContent" class="flex-1 overflow-y-auto p-6 bg-[#DEFFFC]">
                 <!-- Home Page Content -->
                 <div id="homeContent" class="page-content">
                     <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="welcomeUsername">User</span>!</h2>
@@ -271,7 +271,7 @@
 
                     loginPage.classList.add('hidden');
                     appPage.classList.remove('hidden');
-                    showPage('homeContent'); // Show home page by default
+                    showPage('analyticsContent'); // Show analytics page by default
                 } else {
                     displayError('Invalid username or password.');
                 }
@@ -298,5 +298,8 @@
     </script>
 </body>
 </html>
+
+
+
 
 
