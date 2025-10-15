@@ -87,7 +87,7 @@ app.post('/api/get-embed-url', async (req, res) => {
                     "send_to_integration",
                     "download_without_limit",
                     "explore",
-                    "see_sql"
+                    "see_sql",
                 ],
         models: ['data_security_demo'],
         user_attributes: {
