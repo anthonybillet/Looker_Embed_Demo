@@ -4,77 +4,73 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Looker SSO Embed Demo</title>
-    <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font for the logo -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Custom font for the brand logo */
-        .font-brand {
-            font-family: 'Poppins', sans-serif;
-        }
-        /* Custom styles for an active navigation link */
+        .font-logo { font-family: 'Playfair Display', serif; }
+        .font-body { font-family: 'Inter', sans-serif; }
         .nav-link.active {
-            background-color: #4d103c; /* Custom dark purple for active state */
-            color: #ffffff;
+            background-color: #511730;
+            color: white;
         }
-        /* Ensure the iframe fills its container */
-        #analyticsContent, #lookerIframe {
-            height: 100%;
-            width: 100%;
+        /* Spinner Animation */
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border-left-color: #511730;
+            animation: spin 1s ease infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans">
+<body class="font-body bg-gray-100">
 
-    <!-- LOGIN PAGE -->
-    <div id="loginPage" class="flex items-center justify-center h-screen bg-gray-200">
+    <!-- Login Page -->
+    <div id="loginPage" class="flex items-center justify-center min-h-screen">
         <div class="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
-            <h2 class="text-3xl font-extrabold text-center text-gray-900">Looker Embed Demo</h2>
-            <p class="text-center text-gray-600">
-                (Use Carhartt, Columbia, or Manager)
-            </p>
+            <h2 class="text-3xl font-bold text-center text-gray-900">Looker Embed Demo</h2>
+            <p class="text-center text-gray-600">Log in to view your dashboard.<br>(Use Carhartt, Columbia, or Manager)</p>
             <form id="loginForm" class="space-y-6">
                 <div>
                     <label for="username" class="sr-only">Username</label>
-                    <input id="username" name="username" type="text" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm" placeholder="Username">
+                    <input id="username" name="username" type="text" required class="w-full px-4 py-2 text-gray-900 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#511730]" placeholder="Username">
                 </div>
                 <div>
                     <label for="password" class="sr-only">Password</label>
-                    <input id="password" name="password" type="password" required class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm" placeholder="Password">
+                    <input id="password" name="password" type="password" required class="w-full px-4 py-2 text-gray-900 bg-gray-100 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#511730]" placeholder="Password">
                 </div>
-                <div id="errorMessage" class="hidden text-sm text-red-600"></div>
+                <div id="error-message" class="text-sm text-red-600"></div>
                 <div>
-                    <button id="signInButton" type="submit" class="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-[#511730] border border-transparent rounded-md group hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">
-                        <span id="buttonText">Sign in</span>
-                        <span id="loadingSpinner" class="hidden absolute inset-0 flex items-center justify-center">
-                            <svg class="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        </span>
+                    <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#511730] hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">
+                        <span class="btn-text">Sign in</span>
+                        <div class="spinner hidden"></div>
                     </button>
                 </div>
             </form>
         </div>
     </div>
 
-    <!-- MAIN APPLICATION DASHBOARD -->
-    <div id="appPage" class="hidden h-screen w-full lg:flex">
-        <!-- Left Sidebar Navigation -->
-        <aside class="w-60 flex-shrink-0 bg-[#320a28] text-white flex flex-col">
-            <div class="h-16 flex items-center justify-center border-b border-[#4d103c]">
-                <h1 class="font-brand text-2xl text-white">Your Brand Here</h1>
+    <!-- Main Application Page -->
+    <div id="appPage" class="hidden h-screen flex">
+        <!-- Left Navigation Bar -->
+        <aside class="w-64 bg-[#320a28] text-white flex flex-col">
+            <div class="h-16 flex items-center justify-center px-4 border-b border-[#4d103c]">
+                <h1 class="text-2xl font-logo">Your Brand Here</h1>
             </div>
             <nav class="flex-grow px-2 py-4">
                 <ul class="space-y-2">
                     <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="homeContent">
-                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
                         Home</a></li>
                     <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="marketingContent">
-                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514M12 18h3.132a4.001 4.001 0 003.868-2.818"/></svg>
+                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514M12 18h3.132a4.001 4.001 0 003.868-2.818"/></svg>
                         Marketing</a></li>
                     <li><a href="#" class="nav-link active flex items-center px-4 py-2 text-gray-300 rounded-md hover:bg-[#4d103c] hover:text-white" data-target="analyticsContent">
                         <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H-1a2 2 0 01-2-2V5z"/></svg>
@@ -93,40 +89,59 @@
                 <!-- Search Bar -->
                 <div class="relative">
                     <span class="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                        <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     </span>
-                    <input class="w-full md:w-96 pl-10 pr-4 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-500 focus:outline-none focus:ring-[#511730] focus:border-[#511730]" type="search" placeholder="Search...">
+                    <input type="text" placeholder="Search" class="w-full md:w-80 pl-10 pr-4 py-2 border rounded-md text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#511730]">
                 </div>
+
                 <!-- User Info & Logout -->
                 <div class="flex items-center space-x-4">
                      <span id="loggedInUser" class="text-sm text-gray-600"></span>
+                     
+                     <!-- Demo Tools Dropdown -->
+                     <div class="relative">
+                        <button id="demoToolsButton" class="px-4 py-2 text-sm font-medium text-white bg-[#511730] rounded-md hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">
+                            Demo Tools
+                        </button>
+                        <div id="demoToolsMenu" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20 ring-1 ring-black ring-opacity-5">
+                            <!-- Theme/ColorWay Sub-menu -->
+                            <div class="relative group">
+                                <button class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex justify-between items-center">
+                                    <span>Theme/ColorWay</span>
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                </button>
+                                <div id="themeMenu" class="hidden absolute left-full -top-1 ml-1 w-48 bg-white rounded-md shadow-lg py-1 ring-1 ring-black ring-opacity-5">
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo">Light</a>
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo_dark">Dark</a>
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo_crazy">Crazy</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                      <button id="logoutButton" class="px-4 py-2 text-sm font-medium text-white bg-[#511730] rounded-md hover:bg-[#6c1e42] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#511730]">Logout</button>
                 </div>
             </header>
 
             <!-- Page Content -->
-            <main id="pageContent" class="flex-1 overflow-y-auto p-6 bg-[#DEFFFC]">
-                <!-- Home Page Content -->
-                <div id="homeContent" class="page-content">
-                    <h2 class="text-3xl font-bold text-gray-800">Welcome, <span id="welcomeUsername">User</span>!</h2>
-                    <p class="mt-2 text-gray-600">Select a tab from the navigation to get started.</p>
+            <main class="flex-1 overflow-y-auto bg-[#DEFFFC] p-6">
+                <div id="homeContent" class="page-content hidden">
+                    <h1 class="text-3xl font-bold">Welcome <span id="welcomeUsername"></span> User!</h1>
+                    <p class="mt-2 text-gray-600">This is your homepage. Use the navigation on the left to explore.</p>
                 </div>
 
-                <!-- Analytics Page Content -->
-                <div id="analyticsContent" class="page-content hidden h-full w-full">
-                    <iframe id="lookerIframe" src="about:blank" class="w-full h-full border-none"></iframe>
-                </div>
-
-                <!-- Marketing Page Content -->
-                <div id="marketingContent" class="page-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800">Marketing</h2>
-                    <p class="mt-2 text-gray-600">This page is under construction.</p>
+                <div id="analyticsContent" class="page-content h-full">
+                    <iframe id="lookerIframe" class="w-full h-full border-none" src="about:blank"></iframe>
                 </div>
                 
-                <!-- Products Page Content -->
+                <div id="marketingContent" class="page-content hidden">
+                    <h1 class="text-3xl font-bold">Marketing</h1>
+                    <p class="mt-2 text-gray-600">Marketing content will be displayed here.</p>
+                </div>
+                
                 <div id="productsContent" class="page-content hidden">
-                    <h2 class="text-3xl font-bold text-gray-800">Products</h2>
-                    <p class="mt-2 text-gray-600">This page is under construction.</p>
+                    <h1 class="text-3xl font-bold">Products</h1>
+                    <p class="mt-2 text-gray-600">Product information will be displayed here.</p>
                 </div>
             </main>
         </div>
@@ -134,122 +149,105 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- ELEMENTS ---
+            // --- STATE MANAGEMENT ---
+            const validUsers = { 'Carhartt': 'Carhartt', 'Columbia': 'Columbia', 'Manager': 'Manager' };
+            const API_ENDPOINT_URL = 'https://lookerembeddemo-630982230935.us-central1.run.app/api/get-embed-url';
+            let currentUser = null;
+            let isIframeLoaded = false;
+            let currentTheme = 'looker_embed_demo'; // Default theme
+
+            // --- ELEMENT SELECTORS ---
             const loginPage = document.getElementById('loginPage');
             const appPage = document.getElementById('appPage');
             const loginForm = document.getElementById('loginForm');
             const usernameInput = document.getElementById('username');
             const passwordInput = document.getElementById('password');
-            const errorMessage = document.getElementById('errorMessage');
-            const signInButton = document.getElementById('signInButton');
-            const buttonText = document.getElementById('buttonText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
+            const errorMessage = document.getElementById('error-message');
+            const btnText = loginForm.querySelector('.btn-text');
+            const spinner = loginForm.querySelector('.spinner');
             const logoutButton = document.getElementById('logoutButton');
             const loggedInUserSpan = document.getElementById('loggedInUser');
             const welcomeUsernameSpan = document.getElementById('welcomeUsername');
             const lookerIframe = document.getElementById('lookerIframe');
+            const demoToolsButton = document.getElementById('demoToolsButton');
+            const demoToolsMenu = document.getElementById('demoToolsMenu');
+            const themeButton = demoToolsMenu.querySelector('button'); // More specific selector
+            const themeMenu = document.getElementById('themeMenu');
+            const themeOptions = document.querySelectorAll('.theme-option');
             
             const navLinks = document.querySelectorAll('.nav-link');
             const pageContents = document.querySelectorAll('.page-content');
 
-            // --- STATE & CONFIG ---
-            const API_ENDPOINT_URL = 'https://lookerembeddemo-630982230935.us-central1.run.app/api/get-embed-url';
-            let currentUser = null;
-            let isIframeLoaded = false;
-            
-            const validUsers = {
-                'Carhartt': 'Carhartt',
-                'Columbia': 'Columbia',
-                'Manager': 'Manager',
-            };
-
-            // --- FUNCTIONS ---
-            function toggleLoading(isLoading) {
-                signInButton.disabled = isLoading;
-                buttonText.classList.toggle('hidden', isLoading);
-                loadingSpinner.classList.toggle('hidden', !isLoading);
-            }
-
+            // --- HELPER FUNCTIONS ---
             function displayError(message) {
                 errorMessage.textContent = message;
-                errorMessage.classList.remove('hidden');
             }
 
             function clearError() {
-                errorMessage.classList.add('hidden');
+                errorMessage.textContent = '';
             }
 
-            async function generateSignedEmbedUrl(username) {
-                // For the 'Manager' user, pass a comma-separated list.
-                const userAttribute = username === 'Manager' ? 'Carhartt,Columbia' : username;
-                
+            function toggleLoading(isLoading) {
+                if (isLoading) {
+                    btnText.classList.add('hidden');
+                    spinner.classList.remove('hidden');
+                    loginForm.querySelector('button').disabled = true;
+                } else {
+                    btnText.classList.remove('hidden');
+                    spinner.classList.add('hidden');
+                    loginForm.querySelector('button').disabled = false;
+                }
+            }
+            
+            async function generateSignedEmbedUrl(user, theme) {
+                let userAttribute = user;
+                if (user === 'Manager') {
+                    userAttribute = 'Carhartt, Columbia';
+                }
+
                 try {
                     const response = await fetch(API_ENDPOINT_URL, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ username: userAttribute }),
+                        body: JSON.stringify({ username: userAttribute, theme: theme }),
                     });
 
                     if (!response.ok) {
-                        let errorText = `Server returned a non-JSON response. Status: ${response.status}. This usually means the API endpoint is incorrect or the server crashed. Check server logs.`;
-                        try {
-                            const errorData = await response.json();
-                            errorText = errorData.error || 'An unknown server error occurred.';
-                        } catch (e) {
-                             // Ignore JSON parsing error if response is not JSON
-                             const rawError = await response.text();
-                             console.error("Raw server error:", rawError);
-                        }
-                        throw new Error(errorText);
+                        throw new Error(`Server returned status: ${response.status}`);
                     }
-                    
                     const data = await response.json();
                     return data.url;
-
                 } catch (error) {
                     console.error('Error fetching signed URL:', error);
-                    displayError(`ERROR ON SERVER: ${error.message}`);
+                    displayError('ERROR ON SERVER: Your backend server failed to get a URL from Looker. Please check the server logs.');
                     return null;
                 }
             }
             
             function showPage(targetId) {
-                // Hide all pages
-                pageContents.forEach(content => content.classList.add('hidden'));
-                
-                // Deactivate all nav links
-                navLinks.forEach(link => link.classList.remove('active'));
-
-                // Show the target page
-                const targetPage = document.getElementById(targetId);
-                if (targetPage) {
-                    targetPage.classList.remove('hidden');
-                }
-                
-                // Activate the target nav link
-                const targetLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
-                if(targetLink) {
-                    targetLink.classList.add('active');
-                }
-
-                // Load the iframe only when the analytics tab is clicked for the first time
-                if (targetId === 'analyticsContent' && !isIframeLoaded) {
+                pageContents.forEach(content => {
+                    content.classList.toggle('hidden', content.id !== targetId);
+                });
+                navLinks.forEach(link => {
+                    link.classList.toggle('active', link.dataset.target === targetId);
+                });
+                if (targetId === 'analyticsContent') {
                     loadAnalytics();
                 }
             }
-            
+
             async function loadAnalytics() {
-                if (currentUser && !isIframeLoaded) {
-                    console.log(`Requesting embed URL for ${currentUser}...`);
+                if (currentUser) {
+                    console.log(`Requesting embed URL for ${currentUser} with theme ${currentTheme}...`);
+                    isIframeLoaded = false;
                     lookerIframe.src = "about:blank"; // Clear previous content
-                     // Show a temporary loading state if you want
-                    const url = await generateSignedEmbedUrl(currentUser);
+                    
+                    const url = await generateSignedEmbedUrl(currentUser, currentTheme);
                     if (url) {
                         lookerIframe.src = url;
                         isIframeLoaded = true;
                     } else {
-                        // Handle failure to get URL
-                        lookerIframe.parentElement.innerHTML = '<div class="text-red-500">Failed to load dashboard. Check server logs.</div>';
+                        lookerIframe.parentElement.innerHTML = '<div class="text-red-500 font-bold p-4 bg-red-100 rounded-md">Failed to load dashboard. Please check the Cloud Run server logs for details.</div>';
                     }
                 }
             }
@@ -266,12 +264,13 @@
 
                 if (validUsers[username] && validUsers[username] === password) {
                     currentUser = username;
+                    currentTheme = 'looker_embed_demo'; // Reset to default theme on login
                     loggedInUserSpan.textContent = `Logged in as: ${username}`;
                     welcomeUsernameSpan.textContent = username;
 
                     loginPage.classList.add('hidden');
                     appPage.classList.remove('hidden');
-                    showPage('analyticsContent'); // Show analytics page by default
+                    showPage('analyticsContent'); // Default to analytics page
                 } else {
                     displayError('Invalid username or password.');
                 }
@@ -292,14 +291,53 @@
                 lookerIframe.src = 'about:blank';
                 appPage.classList.add('hidden');
                 loginPage.classList.remove('hidden');
+                demoToolsMenu.classList.add('hidden');
+                themeMenu.classList.add('hidden');
+            });
+
+            // --- Demo Tools Menu Logic ---
+            demoToolsButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                demoToolsMenu.classList.toggle('hidden');
+                if (demoToolsMenu.classList.contains('hidden')) {
+                    themeMenu.classList.add('hidden');
+                }
+            });
+
+            themeButton.addEventListener('mouseenter', () => {
+                 themeMenu.classList.remove('hidden');
+            });
+            
+            demoToolsMenu.addEventListener('mouseleave', () => {
+                themeMenu.classList.add('hidden');
+            });
+
+            themeOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const newTheme = e.currentTarget.dataset.theme;
+                    if (newTheme !== currentTheme) {
+                        currentTheme = newTheme;
+                        console.log(`Theme changed to: ${currentTheme}`);
+                        // Reload the dashboard with the new theme
+                        loadAnalytics(); 
+                    }
+                    // Hide menus after selection
+                    demoToolsMenu.classList.add('hidden');
+                    themeMenu.classList.add('hidden');
+                });
+            });
+
+            // Close menus if clicking outside
+            window.addEventListener('click', (e) => {
+                if (!demoToolsButton.contains(e.target) && !demoToolsMenu.contains(e.target)) {
+                    demoToolsMenu.classList.add('hidden');
+                    themeMenu.classList.add('hidden');
+                }
             });
 
         });
     </script>
 </body>
 </html>
-
-
-
-
 
