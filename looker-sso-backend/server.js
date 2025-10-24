@@ -36,7 +36,7 @@ try {
 
 
 // 5. Define Constants
-const DASHBOARD_ID = 'EU9MxVoyJiidBm9oCxVVhR'; // Your specific dashboard ID
+const DASHBOARD_ID = 'external_data_model::data_security_shared_template_dashboard'; // Your specific dashboard ID
 const SESSION_LENGTH = 3600;
 
 // --- Root Route for Health Check ---

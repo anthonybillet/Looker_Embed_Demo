@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looker Embed Demo</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Inter font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Apply Inter font */
+        body, html {
+            font-family: 'Inter', sans-serif;
+            height: 100%;
+            overflow: hidden; /* Prevent scrolling on the body */
+        }
+        /* Custom logo-like font */
+        .font-logo {
+            font-family: 'Playfair Display', serif;
+        }
+        /* Custom colors for Tailwind */
+        .bg-navbar { background-color: #320a28; }
+        .bg-accent, .btn-accent { background-color: #511730; }
+        .hover-bg-accent:hover { background-color: #6a1e40; } /* A slightly lighter shade for hover */
+        .focus-ring-accent:focus { ring-color: #6a1e40; }
+        .bg-main-content { background-color: #DEFFFC; }
+        .bg-nav-hover:hover { background-color: #4d103c; } /* A slightly lighter shade of the navbar bg */
+
+        /* Active nav link style */
+        .nav-link.active {
+            background-color: #511730; /* Use accent color for active link */
+            color: white;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 h-screen">
+
+    <!-- LOGIN PAGE -->
+    <div id="loginPage" class="flex items-center justify-center min-h-screen bg-gray-50">
+        <div class="w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow-md">
+            <!-- Header -->
+            <div class="text-center">
+                <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
+                    Looker Embed Demo
+                </h2>
+                <p class="mt-2 text-sm text-gray-600">
+                    Log in to view your dashboard.
+                </p>
+                <p class="mt-1 text-xs text-gray-500">
+                    (Use Carhartt, Columbia, or Manager)
+                </p>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden p-3 text-sm text-red-700 bg-red-100 rounded-lg"></div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="mt-8 space-y-6">
+                <div>
+                    <label for="username" class="sr-only">Username</label>
+                    <input id="username" name="username" type="text" required
+                        class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm"
+                        placeholder="Username">
+                </div>
+                <div>
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" name="password" type="password" required
+                        class="w-full px-3 py-2 placeholder-gray-500 border border-gray-300 rounded-md shadow-sm appearance-none focus:outline-none focus:ring-[#511730] focus:border-[#511730] sm:text-sm"
+                        placeholder="Password">
+                </div>
+                <button type="submit" id="loginButton"
+                    class="btn-accent relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white border border-transparent rounded-md group hover-bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus-ring-accent">
+                    <!-- Spinner Icon -->
+                    <svg id="loginSpinner" class="hidden w-5 h-5 mr-3 -ml-1 text-white animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Sign in
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APPLICATION PAGE -->
+    <div id="appPage" class="hidden flex h-screen bg-navbar text-white">
+        <!-- Left Navigation Bar -->
+        <aside class="w-64 flex-shrink-0 flex flex-col">
+            <!-- Logo/Brand -->
+            <div class="h-16 flex items-center justify-center px-4">
+                <span class="font-logo text-3xl text-white">Your Brand Here</span>
+            </div>
+            <!-- Navigation Links -->
+            <nav class="flex-grow px-2 py-4">
+                <ul class="space-y-2">
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md bg-nav-hover hover:text-white" data-target="homeContent">
+                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                        Home</a></li>
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md bg-nav-hover hover:text-white" data-target="marketingContent">
+                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-2.236 9.168-5.514M12 18h3.132a4.001 4.001 0 003.868-2.818"/></svg>
+                        Marketing</a></li>
+                    <li><a href="#" class="nav-link active flex items-center px-4 py-2 text-gray-300 rounded-md bg-nav-hover hover:text-white" data-target="analyticsContent">
+                        <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H-1a2 2 0 01-2-2V5z"/></svg>
+                        Analytics</a></li>
+                    <li><a href="#" class="nav-link flex items-center px-4 py-2 text-gray-300 rounded-md bg-nav-hover hover:text-white" data-target="productsContent">
+                         <svg class="h-6 w-6 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                        Products</a></li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content Area -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+            <!-- Top Header -->
+            <header class="h-16 flex items-center justify-between px-6 bg-main-content">
+                <!-- Search Bar -->
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 flex items-center pl-3">
+                        <svg class="h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    </span>
+                    <input type="text" class="pl-10 pr-4 py-2 rounded-md border border-gray-300 text-gray-900 focus:outline-none focus:ring-2 focus-ring-accent" placeholder="Search...">
+                </div>
+                <!-- User/Logout Area -->
+                <div class="flex items-center space-x-4">
+                    <span id="loggedInUserSpan" class="text-sm text-gray-700">Logged in as: User</span>
+                    
+                    <!-- Demo Tools Dropdown -->
+                    <div class="relative" id="demoToolsMenu">
+                        <button id="demoToolsButton" class="btn-accent text-sm text-white font-medium py-2 px-4 rounded-md hover-bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus-ring-accent">
+                            Demo Tools
+                        </button>
+                        <!-- Demo Tools Menu -->
+                        <div id="demoToolsDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-20">
+                            <div class="relative">
+                                <button id="themeMenuButton" class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Theme/ColorWay</button>
+                                <!-- Nested Theme Menu -->
+                                <div id="themeDropdown" class="hidden absolute left-full top-0 mt-0 w-48 bg-white rounded-md shadow-lg py-1 z-30">
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo">Light</a>
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo_dark">Dark</a>
+                                    <a href="#" class="theme-option block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" data-theme="looker_embed_demo_crazy">Crazy</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button id="logoutButton" class="btn-accent text-sm text-white font-medium py-2 px-4 rounded-md hover-bg-accent focus:outline-none focus:ring-2 focus:ring-offset-2 focus-ring-accent">
+                        Logout
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Content -->
+            <main class="flex-1 overflow-y-auto bg-main-content">
+                <!-- Home Page Content -->
+                <div id="homeContent" class="page-content hidden p-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Welcome, <span id="welcomeUsernameSpan">User</span>!</h1>
+                    <p class="mt-4 text-gray-700">This is the homepage of your Looker SSO Embed Demo.</p>
+                </div>
+
+                <!-- Marketing Page Content -->
+                <div id="marketingContent" class="page-content hidden p-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Marketing</h1>
+                    <p class="mt-4 text-gray-700">This page is a placeholder for marketing content.</p>
+                </div>
+
+                <!-- Analytics Page Content (iFrame) -->
+                <div id="analyticsContent" class="page-content h-full">
+                    <iframe id="lookerIframe" src="about:blank" class="w-full h-full border-none"></iframe>
+                </div>
+
+                <!-- Products Page Content -->
+                <div id="productsContent" class="page-content hidden p-8">
+                    <h1 class="text-3xl font-bold text-gray-900">Products</h1>
+                    <p class="mt-4 text-gray-700">This page is a placeholder for products content.</p>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // --- STATE MANAGEMENT ---
+        const validUsers = {
+            'Carhartt': 'Carhartt',
+            'Columbia': 'Columbia',
+            'Manager': 'Manager'
+        };
+        const userAttributes = {
+            'Carhartt': 'Carhartt',
+            'Columbia': 'Columbia',
+            'Manager': 'Carhartt, Columbia'
+        };
+        
+        // This object holds the backend URLs for each environment.
+        const BACKEND_URLS = {
+            // *** IMPORTANT: REPLACE THESE PLACEHOLDER URLS ***
+            dev: 'https://looker-sso-demo-dev-630982230935.us-central1.run.app', // <-- REPLACE THIS with your DEV Cloud Run URL
+            prod: 'https://looker-sso-demo-prod-630982230935.us-central1.run.app' // <-- REPLACE THIS with your PROD Cloud Run URL
+        };
+
+        let currentUser = null;
+        let isIframeLoaded = false;
+        let currentTheme = 'looker_embed_demo'; // Default theme
+
+        // --- ENVIRONMENT DETECTION ---
+        /**
+         * Detects the environment (dev or prod) based on the browser's URL.
+         * @returns {string} 'dev' or 'prod'
+         */
+        function getEnvironment() {
+            const hostname = window.location.hostname;
+            // If the URL contains 'dev' (e.g., from the Firebase 'dev' channel), use the dev backend.
+            if (hostname.includes('dev') || hostname.includes('localhost') || hostname.includes('127.0.0.1')) {
+                console.log("Environment: dev");
+                return 'dev';
+            }
+            // Otherwise, default to prod.
+            console.log("Environment: prod");
+            return 'prod';
+        }
+
+        /**
+         * Gets the correct backend API endpoint URL based on the current environment.
+         * @returns {string} The full API endpoint URL.
+         */
+        function getApiEndpoint() {
+            const env = getEnvironment();
+            return `${BACKEND_URLS[env]}/api/get-embed-url`;
+        }
+
+        // --- DOM ELEMENTS ---
+        const loginPage = document.getElementById('loginPage');
+        const appPage = document.getElementById('appPage');
+        const loginForm = document.getElementById('loginForm');
+        const usernameInput = document.getElementById('username');
+        const passwordInput = document.getElementById('password');
+        const loginButton = document.getElementById('loginButton');
+        const loginSpinner = document.getElementById('loginSpinner');
+        const errorMessage = document.getElementById('errorMessage');
+        const logoutButton = document.getElementById('logoutButton');
+        const loggedInUserSpan = document.getElementById('loggedInUserSpan');
+        const welcomeUsernameSpan = document.getElementById('welcomeUsernameSpan');
+        const lookerIframe = document.getElementById('lookerIframe');
+        const navLinks = document.querySelectorAll('.nav-link');
+        const pageContents = document.querySelectorAll('.page-content');
+        
+        // Demo Tools Elements
+        const demoToolsMenu = document.getElementById('demoToolsMenu');
+        const demoToolsButton = document.getElementById('demoToolsButton');
+        const demoToolsDropdown = document.getElementById('demoToolsDropdown');
+        const themeMenuButton = document.getElementById('themeMenuButton');
+        const themeDropdown = document.getElementById('themeDropdown');
+        const themeOptions = document.querySelectorAll('.theme-option');
+
+        // --- API & LOGIC FUNCTIONS ---
+
+        /**
+         * Toggles the loading state of the login button.
+         * @param {boolean} isLoading - Whether to show the spinner or not.
+         */
+        function toggleLoading(isLoading) {
+            loginSpinner.classList.toggle('hidden', !isLoading);
+            loginButton.disabled = isLoading;
+            loginButton.classList.toggle('cursor-not-allowed', isLoading);
+            loginButton.classList.toggle('opacity-75', isLoading);
+        }
+
+        /**
+         * Displays an error message on the login page.
+         * @param {string} message - The error message to display.
+         */
+        function displayError(message) {
+            errorMessage.textContent = message;
+            errorMessage.classList.remove('hidden');
+        }
+
+        /** Clears the error message. */
+        function clearError() {
+            errorMessage.textContent = '';
+            errorMessage.classList.add('hidden');
+        }
+
+        /**
+         * Fetches the signed embed URL from the backend server.
+         * @param {string} username - The username to generate the URL for.
+         * @param {string} theme - The name of the Looker theme to apply.
+         * @returns {Promise<string|null>} The signed URL or null if an error occurred.
+         */
+        async function generateSignedEmbedUrl(username, theme) {
+            const attribute = userAttributes[username];
+            const API_ENDPOINT_URL = getApiEndpoint();
+
+            try {
+                const response = await fetch(API_ENDPOINT_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        username: attribute,
+                        theme: theme // Send the theme to the backend
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`Server returned a non-JSON response. Status: ${response.status}. Body: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.url) {
+                    return data.url;
+                } else {
+                    throw new Error(data.error || 'Unknown error from server.');
+                }
+
+            } catch (error) {
+                console.error('Error fetching signed URL:', error);
+                // Display the server-side error to the user if available
+                const serverError = error.message.includes('Body:') ? error.message : 'ERROR ON SERVER: Your backend server failed to get a URL from Looker. The problem is NOT on this webpage. Please LOOK at your Cloud Run "Logs" tab for the specific Looker SDK error.';
+                displayError(serverError);
+                // Also update the iframe content
+                const iframeContent = document.getElementById('analyticsContent');
+                iframeContent.innerHTML = `<div class="p-8 text-red-600 font-medium">${serverError}</div>`;
+                return null;
+            }
+        }
+        
+        /**
+         * Shows the specified page and hides all others.
+         * @param {string} targetId - The ID of the page content to show.
+         */
+        function showPage(targetId) {
+            // Hide all page contents
+            pageContents.forEach(content => {
+                content.classList.add('hidden');
+            });
+            // Deactivate all nav links
+            navLinks.forEach(link => {
+                link.classList.remove('active');
+            });
+
+            // Show the target page
+            const targetPage = document.getElementById(targetId);
+            if (targetPage) {
+                targetPage.classList.remove('hidden');
+            }
+
+            // Activate the target nav link
+            const targetLink = document.querySelector(`.nav-link[data-target="${targetId}"]`);
+            if (targetLink) {
+                targetLink.classList.add('active');
+            }
+
+            // Special logic for Analytics page to load the iframe
+            if (targetId === 'analyticsContent') {
+                loadAnalytics();
+            }
+        }
+
+        /**
+         * Loads the Looker iframe if it hasn't been loaded already.
+         */
+        async function loadAnalytics() {
+            if (currentUser && !isIframeLoaded) {
+                console.log(`Requesting embed URL for ${currentUser} with theme ${currentTheme}...`);
+                lookerIframe.src = "about:blank"; // Clear previous content
+                
+                // Show a loading spinner inside the iframe area
+                lookerIframe.parentElement.innerHTML = `
+                    <div class="flex items-center justify-center h-full text-gray-700">
+                        <svg class="w-16 h-16 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="#511730" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span class="ml-4 text-xl">Loading Dashboard...</span>
+                    </div>`;
+
+                const url = await generateSignedEmbedUrl(currentUser, currentTheme);
+                
+                // We need to re-find the iframe parent because we just replaced its HTML
+                const iframeContainer = document.getElementById('analyticsContent');
+                
+                if (url) {
+                    // Re-create the iframe
+                    iframeContainer.innerHTML = `<iframe id="lookerIframe" src="${url}" class="w-full h-full border-none"></iframe>`;
+                    isIframeLoaded = true;
+                } else {
+                    // Error handling is now done inside generateSignedEmbedUrl
+                    // The error message is already displayed in the iframe container
+                }
+            }
+        }
+        
+        /**
+         * Reloads the iframe with a new theme.
+         * @param {string} newTheme - The name of the new Looker theme.
+         */
+        async function reloadIframeWithTheme(newTheme) {
+            currentTheme = newTheme;
+            isIframeLoaded = false; // Force a reload
+            console.log(`Theme changed to: ${newTheme}. Reloading dashboard...`);
+            
+            // If we are currently on the Analytics page, reload it.
+            // Otherwise, the loadAnalytics() function will pick up the new theme
+            // when the user clicks the Analytics tab.
+            if (document.getElementById('analyticsContent').classList.contains('hidden') === false) {
+                 showPage('analyticsContent');
+            }
+        }
+        
+        /** Resets the application to its initial (logged out) state. */
+        function doLogout() {
+            currentUser = null;
+            isIframeLoaded = false;
+            currentTheme = 'looker_embed_demo'; // Reset to default theme
+            usernameInput.value = '';
+            passwordInput.value = '';
+            appPage.classList.add('hidden');
+            loginPage.classList.remove('hidden');
+            clearError();
+            
+            // Reset iframe content in case of a previous error
+            const iframeContainer = document.getElementById('analyticsContent');
+            iframeContainer.innerHTML = `<iframe id="lookerIframe" src="about:blank" class="w-full h-full border-none"></iframe>`;
+        }
+
+        // --- EVENT LISTENERS ---
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            clearError();
+            toggleLoading(true);
+
+            const username = usernameInput.value;
+            const password = passwordInput.value;
+
+            if (validUsers[username] && validUsers[username] === password) {
+                currentUser = username;
+                loggedInUserSpan.textContent = `Logged in as: ${username}`;
+                welcomeUsernameSpan.textContent = username;
+
+                loginPage.classList.add('hidden');
+                appPage.classList.remove('hidden');
+                showPage('analyticsContent'); // Show analytics page by default
+            } else {
+                displayError('Invalid username or password.');
+            }
+            toggleLoading(false);
+        });
+
+        logoutButton.addEventListener('click', doLogout);
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = link.getAttribute('data-target');
+                showPage(targetId);
+            });
+        });
+
+        // --- Demo Tools Menu Logic ---
+        demoToolsButton.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent click from closing menu immediately
+            demoToolsDropdown.classList.toggle('hidden');
+            themeDropdown.classList.add('hidden'); // Hide nested menu
+        });
+
+        themeMenuButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeDropdown.classList.toggle('hidden');
+        });
+        
+        themeOptions.forEach(option => {
+            option.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const newTheme = option.getAttribute('data-theme');
+                reloadIframeWithTheme(newTheme);
+                // Hide menus
+                themeDropdown.classList.add('hidden');
+                demoToolsDropdown.classList.add('hidden');
+            });
+        });
+
+        // Close dropdowns if clicking anywhere else
+        document.addEventListener('click', () => {
+            demoToolsDropdown.classList.add('hidden');
+            themeDropdown.classList.add('hidden');
+        });
+
+    </script>
+</body>
+</html>
+
